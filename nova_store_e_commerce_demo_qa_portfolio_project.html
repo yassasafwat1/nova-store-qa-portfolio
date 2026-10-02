@@ -1,0 +1,2141 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOVA Store - Modern Electronics & QA Portfolio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            900: '#0f172a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom smooth transition styles and scrollbars */
+        body { font-family: 'Inter', sans-serif; }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        /* Custom scrollbar for QA panel */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="flex flex-col min-h-full text-slate-800 antialiased bg-gray-50">
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-slate-900 text-white text-xs py-2 px-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <span class="bg-brand-600 text-white font-bold px-2 py-0.5 rounded text-[10px] uppercase tracking-wider">QA Demo</span>
+                <span>Fully functional frontend portfolio project with embedded QA Suite.</span>
+            </div>
+            <div class="flex items-center gap-4 hidden sm:flex">
+                <span class="text-slate-400"><i class="fa-solid fa-[#00ff88] fa-truck text-emerald-400 mr-1"></i> Free Shipping over $100</span>
+                <a href="#qa-docs" onclick="app.navigateTo('qa-docs')" class="underline text-brand-100 hover:text-white font-medium">View QA Documentation</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 gap-4">
+                
+                <!-- Logo -->
+                <div class="flex items-center gap-8">
+                    <a href="#home" onclick="app.navigateTo('home')" class="flex items-center gap-2 text-2xl font-black text-slate-900 tracking-tight">
+                        <div class="w-9 h-9 rounded-lg bg-brand-600 text-white flex items-center justify-center font-black shadow-md shadow-brand-500/30">N</div>
+                        <span>NOVA<span class="text-brand-600">.</span></span>
+                    </a>
+
+                    <!-- Desktop Nav Links -->
+                    <nav class="hidden md:flex space-x-6 text-sm font-medium text-slate-600">
+                        <a href="#home" onclick="app.navigateTo('home')" class="hover:text-brand-600 py-2 transition-colors">Home</a>
+                        <a href="#products" onclick="app.navigateTo('products')" class="hover:text-brand-600 py-2 transition-colors">Shop All</a>
+                        <a href="#qa-docs" onclick="app.navigateTo('qa-docs')" class="text-amber-600 hover:text-amber-700 font-semibold py-2 transition-colors flex items-center gap-1">
+                            <i class="fa-solid fa-clipboard-check"></i> QA Hub
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- Global Search Bar -->
+                <div class="flex-1 max-w-md hidden sm:block relative">
+                    <div class="relative">
+                        <input type="text" id="global-search-input" placeholder="Search laptops, audio, phones..." 
+                            class="w-full pl-10 pr-10 py-2 bg-slate-100 text-slate-900 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all border border-transparent focus:border-brand-500"
+                            oninput="app.handleSearchInput(this.value)"
+                            onkeydown="if(event.key === 'Enter') app.executeSearch(this.value)">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
+                        <button onclick="app.clearSearch()" id="search-clear-btn" class="hidden absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 text-xs">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                        </button>
+                    </div>
+                    <!-- Live Search Suggestions Dropdown -->
+                    <div id="search-suggestions" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl z-50 max-h-80 overflow-y-auto"></div>
+                </div>
+
+                <!-- Icons & User Actions -->
+                <div class="flex items-center gap-3">
+                    <!-- Wishlist -->
+                    <button onclick="app.navigateTo('wishlist')" class="p-2 text-slate-600 hover:text-brand-600 relative rounded-lg hover:bg-slate-50 transition-colors" title="Wishlist">
+                        <i class="fa-regular fa-heart text-xl"></i>
+                        <span id="wishlist-badge" class="hidden absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+                    </button>
+
+                    <!-- Cart Button -->
+                    <button onclick="app.navigateTo('cart')" class="p-2 text-slate-600 hover:text-brand-600 relative rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2" title="Cart">
+                        <div class="relative">
+                            <i class="fa-solid fa-cart-shopping text-xl"></i>
+                            <span id="cart-badge" class="hidden absolute -top-2 -right-2 bg-brand-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+                        </div>
+                        <span id="cart-total-header" class="text-xs font-semibold text-slate-700 hidden lg:inline">$0.00</span>
+                    </button>
+
+                    <div class="h-6 w-px bg-slate-200 mx-1 hidden sm:block"></div>
+
+                    <!-- User Account Dropdown/Buttons -->
+                    <div id="auth-header-container" class="flex items-center gap-2">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <!-- Mobile Menu Button -->
+                    <button onclick="app.toggleMobileMenu()" class="p-2 text-slate-600 md:hidden rounded-lg hover:bg-slate-100">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Sub-bar -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 bg-white px-4 py-3 space-y-3">
+            <div class="relative mb-2">
+                <input type="text" placeholder="Search products..." 
+                    class="w-full pl-9 pr-4 py-2 bg-slate-100 text-slate-900 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    onkeydown="if(event.key === 'Enter') { app.executeSearch(this.value); app.toggleMobileMenu(); }">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
+            </div>
+            <div class="flex flex-col space-y-2 text-sm font-medium text-slate-700">
+                <a href="#home" onclick="app.navigateTo('home'); app.toggleMobileMenu();" class="py-1.5 hover:text-brand-600">Home</a>
+                <a href="#products" onclick="app.navigateTo('products'); app.toggleMobileMenu();" class="py-1.5 hover:text-brand-600">Shop All Products</a>
+                <a href="#qa-docs" onclick="app.navigateTo('qa-docs'); app.toggleMobileMenu();" class="py-1.5 text-amber-600 font-semibold flex items-center gap-2">
+                    <i class="fa-solid fa-clipboard-check"></i> QA Documentation Suite
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Alert / Toast Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+    <!-- MAIN VIEW CONTAINER -->
+    <main id="main-content" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Views will be dynamically injected here -->
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-300 mt-auto border-t border-slate-800 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Brand Info -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2 text-2xl font-black text-white">
+                        <div class="w-8 h-8 rounded bg-brand-600 text-white flex items-center justify-center text-sm font-black">N</div>
+                        <span>NOVA<span class="text-brand-500">.</span></span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        A modern frontend e-commerce web application designed as a manual & automation QA software testing portfolio case study.
+                    </p>
+                    <div class="flex gap-3 text-slate-400 text-base">
+                        <span class="hover:text-white cursor-pointer"><i class="fa-brands fa-github"></i></span>
+                        <span class="hover:text-white cursor-pointer"><i class="fa-brands fa-linkedin"></i></span>
+                        <span class="hover:text-white cursor-pointer"><i class="fa-solid fa-envelope"></i></span>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <div>
+                    <h3 class="text-xs font-bold text-white uppercase tracking-wider mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#products" onclick="app.navigateTo('products')" class="hover:text-white">All Products</a></li>
+                        <li><a href="#cart" onclick="app.navigateTo('cart')" class="hover:text-white">Shopping Cart</a></li>
+                        <li><a href="#wishlist" onclick="app.navigateTo('wishlist')" class="hover:text-white">Wishlist</a></li>
+                        <li><a href="#orders" onclick="app.navigateTo('orders')" class="hover:text-white">Order History</a></li>
+                    </ul>
+                </div>
+
+                <!-- QA Resources -->
+                <div>
+                    <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-4">QA Portfolio Suite</h3>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#qa-docs" onclick="app.navigateTo('qa-docs', {tab: 'test-plan'})" class="hover:text-amber-300">Test Plan</a></li>
+                        <li><a href="#qa-docs" onclick="app.navigateTo('qa-docs', {tab: 'test-cases'})" class="hover:text-amber-300">Test Cases (25+)</a></li>
+                        <li><a href="#qa-docs" onclick="app.navigateTo('qa-docs', {tab: 'bug-reports'})" class="hover:text-amber-300">Sample Defect Reports</a></li>
+                        <li><a href="#qa-docs" onclick="app.navigateTo('qa-docs', {tab: 'rtm'})" class="hover:text-amber-300">Traceability Matrix (RTM)</a></li>
+                        <li><a href="#qa-docs" onclick="app.navigateTo('qa-docs', {tab: 'deploy-guide'})" class="hover:text-amber-300">GitHub Pages Setup Guide</a></li>
+                    </ul>
+                </div>
+
+                <!-- Testing Demo Features -->
+                <div>
+                    <h3 class="text-xs font-bold text-white uppercase tracking-wider mb-4">Demo Testing Shortcuts</h3>
+                    <div class="space-y-2 text-xs">
+                        <button onclick="app.seedDemoData()" class="w-full text-left bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-2 rounded flex items-center justify-between border border-slate-700">
+                            <span><i class="fa-solid fa-database text-brand-400 mr-2"></i>Reset Demo Data</span>
+                            <i class="fa-solid fa-arrow-rotate-right text-xs text-slate-400"></i>
+                        </button>
+                        <button onclick="app.quickLoginDemoUser()" class="w-full text-left bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-2 rounded flex items-center justify-between border border-slate-700">
+                            <span><i class="fa-solid fa-user-check text-emerald-400 mr-2"></i>Quick Login Demo User</span>
+                            <i class="fa-solid fa-right-to-bracket text-xs text-slate-400"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-800 mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 gap-4">
+                <p>&copy; 2026 NOVA Store E-Commerce QA Portfolio Project. Designed for Software QA Testing.</p>
+                <div class="flex gap-4">
+                    <span>Privacy Policy</span>
+                    <span>Terms of Service</span>
+                    <span>QA Sandbox</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        /**
+         * NOVA Store - Frontend Architecture & Single-Page Application Logic
+         */
+
+        // PRODUCTS DATASET (20+ Items across 6 Categories)
+        const PRODUCTS_DATA = [
+            {
+                id: "nova-101",
+                name: "Aura Noise-Canceling Wireless Headphones",
+                category: "Audio",
+                price: 249.99,
+                oldPrice: 299.99,
+                rating: 4.8,
+                reviews: 124,
+                image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&q=80",
+                description: "Experience pristine studio audio quality with adaptive active noise cancellation, 40-hour battery life, and ultra-plush memory foam earcups.",
+                specifications: { "Battery": "40 Hours", "Bluetooth": "v5.3", "Noise Canceling": "Active Hybrid ANC", "Weight": "250g", "Warranty": "2 Years" },
+                stock: 15,
+                featured: true,
+                dateAdded: "2026-01-15"
+            },
+            {
+                id: "nova-102",
+                name: "UltraBook Pro 15 M3 Laptop",
+                category: "Laptops",
+                price: 1299.00,
+                oldPrice: 1499.00,
+                rating: 4.9,
+                reviews: 89,
+                image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&q=80",
+                description: "Powerful portable computing workstation featuring a 15.6-inch Retina OLED screen, 32GB Unified Memory, and all-day 18-hour battery.",
+                specifications: { "Processor": "Octa-Core M3", "RAM": "32GB", "Storage": "1TB NVMe SSD", "Display": "15.6'' 3K OLED", "OS": "NovaOS / Windows 11" },
+                stock: 8,
+                featured: true,
+                dateAdded: "2026-02-01"
+            },
+            {
+                id: "nova-103",
+                name: "Vortex Gaming Mouse Wireless",
+                category: "Accessories",
+                price: 59.99,
+                oldPrice: 79.99,
+                rating: 4.5,
+                reviews: 210,
+                image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=600&q=80",
+                description: "Ultra-lightweight 58g ergonomic gaming mouse with 26,000 DPI optical sensor and sub-1ms response rate.",
+                specifications: { "DPI": "26,000 DPI", "Sensor": "Optical Hero", "Weight": "58g", "Connectivity": "2.4GHz Wireless / USB-C" },
+                stock: 30,
+                featured: false,
+                dateAdded: "2026-01-20"
+            },
+            {
+                id: "nova-104",
+                name: "Apex Phone 15 Pro 256GB",
+                category: "Smartphones",
+                price: 999.00,
+                oldPrice: 1099.00,
+                rating: 4.7,
+                reviews: 340,
+                image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&q=80",
+                description: "Flagship mobile device with titanium frame, triple 48MP camera setup, 120Hz LTPO display, and 5G connectivity.",
+                specifications: { "Display": "6.7-inch OLED 120Hz", "Camera": "48MP + 12MP + 12MP", "Battery": "4500 mAh", "Storage": "256GB" },
+                stock: 12,
+                featured: true,
+                dateAdded: "2026-02-10"
+            },
+            {
+                id: "nova-105",
+                name: "Pulse Smart Watch Series 5",
+                category: "Smart Devices",
+                price: 199.50,
+                oldPrice: 249.50,
+                rating: 4.4,
+                reviews: 78,
+                image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80",
+                description: "Advanced fitness and health companion with ECG, SpO2 monitoring, GPS tracking, and 50m water resistance.",
+                specifications: { "Display": "Always-On AMOLED", "Water Resistance": "5 ATM (50m)", "Sensors": "Heart Rate, SpO2, ECG", "Battery": "7 Days" },
+                stock: 22,
+                featured: true,
+                dateAdded: "2026-01-05"
+            },
+            {
+                id: "nova-106",
+                name: "SoundPulse Portable Bluetooth Speaker",
+                category: "Audio",
+                price: 79.00,
+                oldPrice: 99.00,
+                rating: 4.6,
+                reviews: 156,
+                image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=600&q=80",
+                description: "360-degree room-filling audio speaker featuring deep bass, IP67 waterproof rating, and 20-hour playback time.",
+                specifications: { "Output": "30W Stereo", "Waterproof": "IP67", "Battery": "20 Hours", "Bluetooth": "v5.2" },
+                stock: 0, // OUT OF STOCK FOR QA TESTING
+                featured: false,
+                dateAdded: "2025-12-11"
+            },
+            {
+                id: "nova-107",
+                name: "ErgoType Mechanical Keyboard",
+                category: "Accessories",
+                price: 129.00,
+                oldPrice: 159.00,
+                rating: 4.8,
+                reviews: 95,
+                image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=600&q=80",
+                description: "Custom mechanical keyboard with hot-swappable tactile switches, RGB per-key backlighting, and solid aluminum chassis.",
+                specifications: { "Switches": "Hot-swappable Brown Switches", "Layout": "75% Compact", "Lighting": "RGB Per-key", "Cable": "Detachable Braided USB-C" },
+                stock: 18,
+                featured: true,
+                dateAdded: "2026-02-14"
+            },
+            {
+                id: "nova-108",
+                name: "VisionPro 27'' 4K HDR Monitor",
+                category: "Electronics",
+                price: 449.00,
+                oldPrice: 529.00,
+                rating: 4.7,
+                reviews: 62,
+                image: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600&q=80",
+                description: "Color-accurate 4K IPS monitor designed for creative professionals and software engineers with 99% DCI-P3 coverage.",
+                specifications: { "Resolution": "3840 x 2160 (4K)", "Panel": "IPS HDR400", "Refresh Rate": "144Hz", "Ports": "HDMI 2.1, DisplayPort, USB-C 90W PD" },
+                stock: 5,
+                featured: false,
+                dateAdded: "2026-01-28"
+            },
+            {
+                id: "nova-109",
+                name: "BudsLive True Wireless Earbuds",
+                category: "Audio",
+                price: 89.99,
+                oldPrice: 119.99,
+                rating: 4.3,
+                reviews: 180,
+                image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=600&q=80",
+                description: "Compact wireless earbuds with active environmental noise cancellation, clear call mics, and IPX4 sweat resistance.",
+                specifications: { "Battery": "6h + 24h Case", "Mic Count": "4 Microphones", "Codec": "AAC / LDAC" },
+                stock: 40,
+                featured: false,
+                dateAdded: "2026-01-02"
+            },
+            {
+                id: "nova-110",
+                name: "AirLite Book 13 Laptop",
+                category: "Laptops",
+                price: 849.00,
+                oldPrice: 949.00,
+                rating: 4.5,
+                reviews: 44,
+                image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600&q=80",
+                description: "Featherlight 1.1kg ultrabook for students and professionals on the move with crisp QHD display.",
+                specifications: { "RAM": "16GB LPDDR5", "Storage": "512GB SSD", "Weight": "1.1kg", "Display": "13.3'' QHD IPS" },
+                stock: 14,
+                featured: false,
+                dateAdded: "2026-02-05"
+            },
+            {
+                id: "nova-111",
+                name: "NovaTab 11 Pro Tablet",
+                category: "Smart Devices",
+                price: 499.00,
+                oldPrice: 579.00,
+                rating: 4.6,
+                reviews: 83,
+                image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=600&q=80",
+                description: "High-performance digital tablet with stylus support, 120Hz display, and quad Dolby Atmos speakers.",
+                specifications: { "Display": "11.2'' OLED 120Hz", "Processor": "Snapdragon 8 Gen 2", "Pen Included": "Yes" },
+                stock: 9,
+                featured: false,
+                dateAdded: "2026-01-18"
+            },
+            {
+                id: "nova-112",
+                name: "ChargeFast 100W GaN Wall Charger",
+                category: "Accessories",
+                price: 39.99,
+                oldPrice: 49.99,
+                rating: 4.9,
+                reviews: 310,
+                image: "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=600&q=80",
+                description: "Ultra-compact Gallium Nitride 4-port wall adapter capable of charging laptops, tablets, and phones simultaneously.",
+                specifications: { "Ports": "3x USB-C, 1x USB-A", "Total Wattage": "100W Max", "Tech": "GaN V" },
+                stock: 50,
+                featured: false,
+                dateAdded: "2026-01-12"
+            },
+            {
+                id: "nova-113",
+                name: "NovaCam 4K Streaming Webcam",
+                category: "Electronics",
+                price: 119.00,
+                oldPrice: 149.00,
+                rating: 4.2,
+                reviews: 51,
+                image: "https://images.unsplash.com/photo-1587826080692-f439cd0b70da?w=600&q=80",
+                description: "Ultra HD 60fps webcam with dual noise-canceling microphones and automatic low-light correction.",
+                specifications: { "Resolution": "4K @ 30fps / 1080p @ 60fps", "Focus": "Auto HDR Focus", "Privacy Cover": "Included" },
+                stock: 11,
+                featured: false,
+                dateAdded: "2026-02-08"
+            },
+            {
+                id: "nova-114",
+                name: "Apex Phone 15 Standard Edition",
+                category: "Smartphones",
+                price: 699.00,
+                oldPrice: 799.00,
+                rating: 4.5,
+                reviews: 112,
+                image: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=600&q=80",
+                description: "Sleek and reliable everyday smartphone with dual camera system, vibrant OLED display, and all-day endurance.",
+                specifications: { "Display": "6.1'' OLED", "Storage": "128GB", "Camera": "50MP Dual Camera" },
+                stock: 16,
+                featured: false,
+                dateAdded: "2026-01-22"
+            },
+            {
+                id: "nova-115",
+                name: "SmartHub Home Automation Bridge",
+                category: "Smart Devices",
+                price: 89.00,
+                oldPrice: 109.00,
+                rating: 4.1,
+                reviews: 37,
+                image: "https://images.unsplash.com/photo-1558002038-1055907df827?w=600&q=80",
+                description: "Centralized smart home hub compatible with Zigbee, Matter, and Wi-Fi devices for seamless control.",
+                specifications: { "Protocols": "Matter, Thread, Zigbee 3.0", "Voice Control": "Alexa, Google, Siri" },
+                stock: 7,
+                featured: false,
+                dateAdded: "2025-11-30"
+            },
+            {
+                id: "nova-116",
+                name: "StudioStream USB Condenser Microphone",
+                category: "Audio",
+                price: 109.99,
+                oldPrice: 129.99,
+                rating: 4.7,
+                reviews: 145,
+                image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=600&q=80",
+                description: "Broadcast-quality USB condenser mic with cardioid polar pattern, zero-latency monitoring headphone jack, and gain control.",
+                specifications: { "Sample Rate": "24-bit/96kHz", "Pattern": "Cardioid / Omnidirectional", "Connection": "USB-C Plug & Play" },
+                stock: 25,
+                featured: false,
+                dateAdded: "2026-01-19"
+            },
+            {
+                id: "nova-117",
+                name: "ProDock 12-in-1 USB-C Hub",
+                category: "Accessories",
+                price: 89.99,
+                oldPrice: 109.99,
+                rating: 4.6,
+                reviews: 88,
+                image: "https://images.unsplash.com/photo-1544652478-6653e09f18a2?w=600&q=80",
+                description: "Aluminum docking station with dual 4K HDMI ports, Gigabit Ethernet, SD card reader, and 100W Power Delivery.",
+                specifications: { "Video Outputs": "Dual HDMI 4K@60Hz", "Ethernet": "1000Mbps", "Power Input": "Pass-through 100W PD" },
+                stock: 19,
+                featured: false,
+                dateAdded: "2026-02-12"
+            },
+            {
+                id: "nova-118",
+                name: "GamerEdge 34'' Curved Monitor",
+                category: "Electronics",
+                price: 599.00,
+                oldPrice: 699.00,
+                rating: 4.8,
+                reviews: 73,
+                image: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600&q=80",
+                description: "Immersive 1000R curved ultra-wide gaming monitor featuring 175Hz refresh rate and 0.5ms response time.",
+                specifications: { "Curvature": "1000R Ultra-Wide", "Refresh Rate": "175Hz", "Resolution": "3440 x 1440 WQHD" },
+                stock: 4,
+                featured: true,
+                dateAdded: "2026-02-15"
+            },
+            {
+                id: "nova-119",
+                name: "NovaFit Smart Scale",
+                category: "Smart Devices",
+                price: 49.99,
+                oldPrice: 69.99,
+                rating: 4.3,
+                reviews: 99,
+                image: "https://images.unsplash.com/photo-1576243345690-4e4b79b63288?w=600&q=80",
+                description: "Smart body composition scale measuring body fat, muscle mass, BMI, and water percentage synced to your phone.",
+                specifications: { "Metrics": "13 Body Composition Stats", "Connectivity": "Bluetooth + Wi-Fi", "Max Weight": "180kg / 400lbs" },
+                stock: 28,
+                featured: false,
+                dateAdded: "2026-01-08"
+            },
+            {
+                id: "nova-120",
+                name: "CyberPad RGB XL Desk Mat",
+                category: "Accessories",
+                price: 29.99,
+                oldPrice: 39.99,
+                rating: 4.5,
+                reviews: 162,
+                image: "https://images.unsplash.com/photo-1616440342523-286a67a80b87?w=600&q=80",
+                description: "Waterproof micro-woven cloth gaming surface with 14 custom RGB lighting modes and non-slip rubber base.",
+                specifications: { "Dimensions": "900mm x 400mm x 4mm", "Surface": "Micro-textured Cloth", "Power": "USB Powered" },
+                stock: 45,
+                featured: false,
+                dateAdded: "2026-02-03"
+            }
+        ];
+
+        // DEMO COUPONS
+        const VALID_COUPONS = {
+            'NOVA10': { type: 'percent', value: 10, label: '10% Off Sitewide' },
+            'WELCOME15': { type: 'percent', value: 15, label: '15% New Customer Discount' },
+            'EXPIRED20': { expired: true, label: 'Expired Promo' }
+        };
+
+        // APPLICATION STATE CONTROLLER
+        class NovaApp {
+            constructor() {
+                this.products = PRODUCTS_DATA;
+                this.cart = JSON.parse(localStorage.getItem('nova_cart')) || [];
+                this.wishlist = JSON.parse(localStorage.getItem('nova_wishlist')) || [];
+                this.user = JSON.parse(localStorage.getItem('nova_user')) || null;
+                this.orders = JSON.parse(localStorage.getItem('nova_orders')) || [];
+                this.appliedCoupon = JSON.parse(localStorage.getItem('nova_coupon')) || null;
+                this.registeredUsers = JSON.parse(localStorage.getItem('nova_users_db')) || [
+                    { name: 'John QA Tester', email: 'tester@nova.com', password: 'Password123!', phone: '+1 (555) 019-2834', address: '123 QA Testing Blvd', city: 'Tech City', country: 'United States', postalCode: '90210' }
+                ];
+                
+                // Active View Parameters
+                this.currentRoute = 'home';
+                this.routeParams = {};
+                
+                // Filter States
+                this.shopFilters = {
+                    category: 'All',
+                    priceMax: 1500,
+                    minRating: 0,
+                    inStockOnly: false,
+                    searchQuery: '',
+                    sortBy: 'featured'
+                };
+            }
+
+            init() {
+                this.updateHeaderAuthUI();
+                this.updateBadges();
+                this.handleURLHash();
+                
+                window.addEventListener('hashchange', () => this.handleURLHash());
+            }
+
+            navigateTo(route, params = {}) {
+                this.currentRoute = route;
+                this.routeParams = params;
+                window.location.hash = `#${route}${params.id ? '?id=' + params.id : ''}`;
+                this.render();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            handleURLHash() {
+                const hash = window.location.hash.replace('#', '') || 'home';
+                const [route, queryString] = hash.split('?');
+                const params = {};
+                if (queryString) {
+                    const searchParams = new URLSearchParams(queryString);
+                    for (let [key, value] of searchParams) {
+                        params[key] = value;
+                    }
+                }
+                this.currentRoute = route || 'home';
+                this.routeParams = params;
+                this.render();
+            }
+
+            render() {
+                const main = document.getElementById('main-content');
+                
+                switch (this.currentRoute) {
+                    case 'home':
+                        main.innerHTML = this.renderHomeView();
+                        break;
+                    case 'products':
+                        main.innerHTML = this.renderProductsView();
+                        this.attachShopFilterEvents();
+                        break;
+                    case 'product':
+                        main.innerHTML = this.renderProductDetailView(this.routeParams.id);
+                        break;
+                    case 'cart':
+                        main.innerHTML = this.renderCartView();
+                        break;
+                    case 'checkout':
+                        main.innerHTML = this.renderCheckoutView();
+                        break;
+                    case 'wishlist':
+                        main.innerHTML = this.renderWishlistView();
+                        break;
+                    case 'login':
+                        main.innerHTML = this.renderLoginView();
+                        break;
+                    case 'register':
+                        main.innerHTML = this.renderRegisterView();
+                        break;
+                    case 'profile':
+                        if (!this.user) { this.navigateTo('login'); return; }
+                        main.innerHTML = this.renderProfileView();
+                        break;
+                    case 'orders':
+                        main.innerHTML = this.renderOrdersView();
+                        break;
+                    case 'qa-docs':
+                        main.innerHTML = this.renderQADocsView(this.routeParams.tab || 'overview');
+                        break;
+                    default:
+                        main.innerHTML = this.renderNotFoundView();
+                }
+            }
+
+            renderHomeView() {
+                const featured = this.products.filter(p => p.featured).slice(0, 4);
+                const categories = ['Electronics', 'Laptops', 'Smartphones', 'Audio', 'Accessories', 'Smart Devices'];
+
+                return `
+                    <!-- Hero Banner -->
+                    <div class="relative bg-gradient-to-br from-slate-900 via-brand-900 to-slate-900 text-white rounded-2xl overflow-hidden shadow-xl mb-12">
+                        <div class="max-w-3xl px-6 py-12 md:py-20 md:px-12 relative z-10">
+                            <span class="inline-block bg-brand-500/20 text-brand-300 border border-brand-500/30 font-semibold text-xs px-3 py-1 rounded-full mb-4">
+                                Premium Tech Store Demo
+                            </span>
+                            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight mb-4">
+                                High-Performance Tech Built for Modern Living.
+                            </h1>
+                            <p class="text-slate-300 text-sm md:text-base mb-8 max-w-xl">
+                                Explore next-generation electronics, high-fidelity audio, and flagship devices with fast checkout and guaranteed quality.
+                            </p>
+                            <div class="flex flex-wrap gap-4">
+                                <button onclick="app.navigateTo('products')" class="bg-brand-600 hover:bg-brand-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg shadow-brand-600/30 transition-all text-sm flex items-center gap-2">
+                                    <span>Explore Shop</span>
+                                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                                </button>
+                                <button onclick="app.navigateTo('qa-docs')" class="bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 font-semibold px-6 py-3 rounded-lg transition-all text-sm flex items-center gap-2">
+                                    <i class="fa-solid fa-clipboard-list text-amber-400"></i>
+                                    <span>Inspect QA Portfolio</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute right-0 bottom-0 top-0 w-1/2 opacity-20 md:opacity-30 bg-cover bg-center pointer-events-none" style="background-image: url('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80')"></div>
+                    </div>
+
+                    <!-- Category Quick Links -->
+                    <div class="mb-12">
+                        <div class="flex justify-between items-end mb-6">
+                            <div>
+                                <h2 class="text-2xl font-bold text-slate-900">Shop by Category</h2>
+                                <p class="text-xs text-slate-500">Browse through our curated tech catalog</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                            ${categories.map(cat => `
+                                <button onclick="app.filterByCategory('${cat}')" class="bg-white hover:border-brand-500 border border-gray-200 p-4 rounded-xl text-center shadow-sm hover:shadow-md transition-all group">
+                                    <div class="w-10 h-10 mx-auto mb-2 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                        <i class="${this.getCategoryIcon(cat)}"></i>
+                                    </div>
+                                    <span class="text-xs font-semibold text-slate-800">${cat}</span>
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Featured Products Grid -->
+                    <div class="mb-12">
+                        <div class="flex justify-between items-end mb-6">
+                            <div>
+                                <h2 class="text-2xl font-bold text-slate-900">Featured Products</h2>
+                                <p class="text-xs text-slate-500">Top customer picks with high satisfaction</p>
+                            </div>
+                            <button onclick="app.navigateTo('products')" class="text-brand-600 hover:text-brand-700 text-sm font-semibold flex items-center gap-1">
+                                View All (${this.products.length}) <i class="fa-solid fa-angle-right text-xs"></i>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            ${featured.map(p => this.renderProductCard(p)).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Promo & QA Testing Notice Banner -->
+                    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
+                        <div class="space-y-2">
+                            <div class="inline-flex items-center gap-2 bg-amber-200/60 text-amber-900 text-xs font-bold px-2.5 py-1 rounded">
+                                <i class="fa-solid fa-bug"></i> QA Engineer Sandbox Notice
+                            </div>
+                            <h3 class="text-lg font-bold text-amber-900">Designed for End-to-End Software Testing</h3>
+                            <p class="text-xs text-amber-800 max-w-2xl leading-relaxed">
+                                You can test registration, cart logic, custom coupons (<code class="bg-amber-100 px-1 py-0.5 rounded border border-amber-300 font-bold">NOVA10</code>, <code class="bg-amber-100 px-1 py-0.5 rounded border border-amber-300 font-bold">WELCOME15</code>, <code class="bg-amber-100 px-1 py-0.5 rounded border border-amber-300 font-bold">EXPIRED20</code>), out-of-stock items, and order creation. Complete test documentation is embedded below.
+                            </p>
+                        </div>
+                        <button onclick="app.navigateTo('qa-docs')" class="bg-amber-600 hover:bg-amber-700 text-white font-semibold px-5 py-2.5 rounded-lg text-xs whitespace-nowrap shadow-sm">
+                            Open QA Documentation
+                        </button>
+                    </div>
+                `;
+            }
+
+            renderProductsView() {
+                const categories = ['All', 'Electronics', 'Laptops', 'Smartphones', 'Audio', 'Accessories', 'Smart Devices'];
+                
+                // Filter logic
+                let filtered = this.products.filter(p => {
+                    const matchCategory = this.shopFilters.category === 'All' || p.category === this.shopFilters.category;
+                    const matchPrice = p.price <= this.shopFilters.priceMax;
+                    const matchRating = p.rating >= this.shopFilters.minRating;
+                    const matchStock = !this.shopFilters.inStockOnly || p.stock > 0;
+                    const matchSearch = !this.shopFilters.searchQuery || 
+                        p.name.toLowerCase().includes(this.shopFilters.searchQuery.toLowerCase()) ||
+                        p.description.toLowerCase().includes(this.shopFilters.searchQuery.toLowerCase());
+
+                    return matchCategory && matchPrice && matchRating && matchStock && matchSearch;
+                });
+
+                // Sorting
+                if (this.shopFilters.sortBy === 'price-low') {
+                    filtered.sort((a, b) => a.price - b.price);
+                } else if (this.shopFilters.sortBy === 'price-high') {
+                    filtered.sort((a, b) => b.price - a.price);
+                } else if (this.shopFilters.sortBy === 'rating') {
+                    filtered.sort((a, b) => b.rating - a.rating);
+                } else if (this.shopFilters.sortBy === 'newest') {
+                    filtered.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+                }
+
+                return `
+                    <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h1 class="text-2xl font-bold text-slate-900">Shop Catalog</h1>
+                            <p class="text-xs text-slate-500">Showing ${filtered.length} of ${this.products.length} products</p>
+                        </div>
+
+                        <!-- Active Search Badge -->
+                        ${this.shopFilters.searchQuery ? `
+                            <div class="inline-flex items-center gap-2 bg-brand-50 border border-brand-200 text-brand-700 px-3 py-1 rounded-full text-xs">
+                                <span>Search: <strong>"${this.shopFilters.searchQuery}"</strong></span>
+                                <button onclick="app.clearSearch()" class="hover:text-brand-900"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                        <!-- Sidebar Filters -->
+                        <div class="bg-white p-5 rounded-xl border border-gray-200 h-fit space-y-6">
+                            <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+                                <h3 class="font-bold text-sm text-slate-900"><i class="fa-solid fa-filter text-brand-600 mr-2"></i>Filter Products</h3>
+                                <button onclick="app.resetFilters()" class="text-xs text-brand-600 hover:underline">Reset All</button>
+                            </div>
+
+                            <!-- Category Filter -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Category</label>
+                                <div class="space-y-1">
+                                    ${categories.map(cat => `
+                                        <button onclick="app.setCategoryFilter('${cat}')" 
+                                            class="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${this.shopFilters.category === cat ? 'bg-brand-50 text-brand-600 font-bold' : 'text-slate-600 hover:bg-slate-50'}">
+                                            ${cat}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <!-- Price Range Filter -->
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Max Price</label>
+                                    <span class="text-xs font-bold text-brand-600" id="price-slider-val">$${this.shopFilters.priceMax}</span>
+                                </div>
+                                <input type="range" min="30" max="1500" step="10" value="${this.shopFilters.priceMax}" id="filter-price-range"
+                                    class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-600">
+                            </div>
+
+                            <!-- Minimum Rating -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Minimum Rating</label>
+                                <select id="filter-rating-select" class="w-full bg-slate-50 border border-gray-200 rounded-lg text-xs py-2 px-3 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                                    <option value="0" ${this.shopFilters.minRating === 0 ? 'selected' : ''}>All Ratings</option>
+                                    <option value="4.5" ${this.shopFilters.minRating === 4.5 ? 'selected' : ''}>4.5★ & Above</option>
+                                    <option value="4.0" ${this.shopFilters.minRating === 4.0 ? 'selected' : ''}>4.0★ & Above</option>
+                                </select>
+                            </div>
+
+                            <!-- Availability Checkbox -->
+                            <div class="pt-2 border-t border-gray-100">
+                                <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+                                    <input type="checkbox" id="filter-instock-checkbox" ${this.shopFilters.inStockOnly ? 'checked' : ''} class="rounded text-brand-600 focus:ring-brand-500 h-4 w-4">
+                                    <span class="font-medium">In Stock Only</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Product Grid & Sorting Topbar -->
+                        <div class="lg:col-span-3 space-y-4">
+                            <!-- Sorting Row -->
+                            <div class="bg-white p-3 rounded-xl border border-gray-200 flex flex-wrap items-center justify-between gap-4 text-xs">
+                                <span class="text-slate-500 font-medium">Sort results by:</span>
+                                <select id="shop-sort-select" class="bg-slate-50 border border-gray-200 rounded-lg py-1.5 px-3 font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                                    <option value="featured" ${this.shopFilters.sortBy === 'featured' ? 'selected' : ''}>Featured Products</option>
+                                    <option value="price-low" ${this.shopFilters.sortBy === 'price-low' ? 'selected' : ''}>Price: Low to High</option>
+                                    <option value="price-high" ${this.shopFilters.sortBy === 'price-high' ? 'selected' : ''}>Price: High to Low</option>
+                                    <option value="rating" ${this.shopFilters.sortBy === 'rating' ? 'selected' : ''}>Highest Rated</option>
+                                    <option value="newest" ${this.shopFilters.sortBy === 'newest' ? 'selected' : ''}>Newest Arrivals</option>
+                                </select>
+                            </div>
+
+                            <!-- Product Cards Grid -->
+                            ${filtered.length > 0 ? `
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    ${filtered.map(p => this.renderProductCard(p)).join('')}
+                                </div>
+                            ` : `
+                                <!-- Empty State -->
+                                <div class="bg-white rounded-xl border border-gray-200 p-12 text-center my-8">
+                                    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 text-2xl">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </div>
+                                    <h3 class="text-lg font-bold text-slate-800 mb-1">No products found</h3>
+                                    <p class="text-xs text-slate-500 mb-6">Try adjusting your filters, price range, or search keywords.</p>
+                                    <button onclick="app.resetFilters()" class="bg-brand-600 hover:bg-brand-700 text-white font-semibold text-xs px-4 py-2 rounded-lg">
+                                        Reset All Filters
+                                    </button>
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderProductCard(p) {
+                const inWishlist = this.wishlist.some(item => item.id === p.id);
+                const discount = p.oldPrice ? Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100) : 0;
+
+                return `
+                    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between group relative">
+                        <!-- Image Container -->
+                        <div class="relative bg-slate-100 h-48 overflow-hidden">
+                            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                                onerror="this.src='https://placehold.co/600x400/e2e8f0/475569?text=NOVA+Store'">
+                            
+                            <!-- Badges -->
+                            <div class="absolute top-2 left-2 flex flex-col gap-1">
+                                ${discount > 0 ? `<span class="bg-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">-${discount}%</span>` : ''}
+                                ${p.stock === 0 ? `<span class="bg-slate-800 text-white text-[10px] font-bold px-2 py-0.5 rounded">Out of Stock</span>` : ''}
+                            </div>
+
+                            <!-- Wishlist Button -->
+                            <button onclick="app.toggleWishlist('${p.id}')" 
+                                class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 hover:bg-white text-slate-600 hover:text-rose-500 shadow flex items-center justify-center transition-colors">
+                                <i class="${inWishlist ? 'fa-solid fa-heart text-rose-500' : 'fa-regular fa-heart'}"></i>
+                            </button>
+                        </div>
+
+                        <!-- Card Info -->
+                        <div class="p-4 flex-1 flex flex-col justify-between">
+                            <div>
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-brand-600 mb-1 block">${p.category}</span>
+                                <a href="#product?id=${p.id}" onclick="app.navigateTo('product', {id: '${p.id}'})" class="font-bold text-sm text-slate-900 hover:text-brand-600 line-clamp-2 transition-colors mb-2">
+                                    ${p.name}
+                                </a>
+                            </div>
+
+                            <div class="mt-3">
+                                <!-- Rating -->
+                                <div class="flex items-center gap-1 text-xs text-amber-400 mb-2">
+                                    <i class="fa-solid fa-star"></i>
+                                    <span class="font-bold text-slate-800">${p.rating}</span>
+                                    <span class="text-slate-400 text-[11px]">(${p.reviews})</span>
+                                </div>
+
+                                <!-- Pricing -->
+                                <div class="flex items-baseline gap-2 mb-3">
+                                    <span class="text-base font-black text-slate-900">$${p.price.toFixed(2)}</span>
+                                    ${p.oldPrice ? `<span class="text-xs text-slate-400 line-through">$${p.oldPrice.toFixed(2)}</span>` : ''}
+                                </div>
+
+                                <!-- Action Button -->
+                                <button onclick="app.addToCart('${p.id}')" ${p.stock === 0 ? 'disabled' : ''} 
+                                    class="w-full ${p.stock === 0 ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-slate-900 hover:bg-brand-600 text-white'} font-semibold py-2 px-3 rounded-lg text-xs transition-colors flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-cart-plus text-xs"></i>
+                                    <span>${p.stock === 0 ? 'Out of Stock' : 'Add to Cart'}</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderProductDetailView(id) {
+                const product = this.products.find(p => p.id === id);
+                if (!product) return this.renderNotFoundView("Product Not Found");
+
+                const related = this.products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
+                const inWishlist = this.wishlist.some(item => item.id === product.id);
+
+                return `
+                    <div class="space-y-8">
+                        <!-- Breadcrumbs -->
+                        <nav class="flex text-xs text-slate-500 gap-2">
+                            <a href="#home" onclick="app.navigateTo('home')" class="hover:underline">Home</a>
+                            <span>/</span>
+                            <a href="#products" onclick="app.navigateTo('products')" class="hover:underline">Shop</a>
+                            <span>/</span>
+                            <span class="text-slate-900 font-medium">${product.name}</span>
+                        </nav>
+
+                        <!-- Detail Section Grid -->
+                        <div class="bg-white rounded-2xl border border-gray-200 p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8 shadow-sm">
+                            <!-- Image Gallery -->
+                            <div class="space-y-4">
+                                <div class="bg-slate-100 rounded-xl overflow-hidden h-80 md:h-96 flex items-center justify-center border border-gray-200">
+                                    <img id="main-product-img" src="${product.image}" alt="${product.name}" class="max-h-full object-contain">
+                                </div>
+                            </div>
+
+                            <!-- Specs & Purchase Controls -->
+                            <div class="flex flex-col justify-between space-y-6">
+                                <div>
+                                    <div class="flex items-center justify-between gap-2 mb-2">
+                                        <span class="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-2.5 py-1 rounded">${product.category}</span>
+                                        <span class="text-xs font-semibold ${product.stock > 0 ? 'text-emerald-600 bg-emerald-50' : 'text-rose-600 bg-rose-50'} px-2.5 py-1 rounded">
+                                            ${product.stock > 0 ? `In Stock (${product.stock} units)` : 'Out of Stock'}
+                                        </span>
+                                    </div>
+
+                                    <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 mb-3">${product.name}</h1>
+
+                                    <!-- Rating -->
+                                    <div class="flex items-center gap-2 mb-4 text-xs">
+                                        <div class="flex text-amber-400">
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star-half-stroke"></i>
+                                        </div>
+                                        <span class="font-bold text-slate-800">${product.rating}</span>
+                                        <span class="text-slate-400">(${product.reviews} verified customer reviews)</span>
+                                    </div>
+
+                                    <!-- Pricing -->
+                                    <div class="flex items-baseline gap-3 mb-6 pb-6 border-b border-gray-100">
+                                        <span class="text-3xl font-black text-slate-900">$${product.price.toFixed(2)}</span>
+                                        ${product.oldPrice ? `<span class="text-base text-slate-400 line-through">$${product.oldPrice.toFixed(2)}</span>` : ''}
+                                    </div>
+
+                                    <p class="text-xs md:text-sm text-slate-600 leading-relaxed mb-6">${product.description}</p>
+
+                                    <!-- Quantity Selector & Actions -->
+                                    <div class="space-y-4">
+                                        <div class="flex items-center gap-4">
+                                            <label class="text-xs font-bold text-slate-700 uppercase">Quantity:</label>
+                                            <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-slate-50">
+                                                <button onclick="app.adjustDetailQty(-1)" class="px-3 py-1.5 text-slate-600 hover:bg-slate-200 font-bold">-</button>
+                                                <input type="number" id="detail-qty-input" value="1" min="1" max="${product.stock}" class="w-12 text-center bg-transparent text-xs font-bold focus:outline-none">
+                                                <button onclick="app.adjustDetailQty(1)" class="px-3 py-1.5 text-slate-600 hover:bg-slate-200 font-bold">+</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex gap-4 pt-2">
+                                            <button onclick="app.addToCart('${product.id}', parseInt(document.getElementById('detail-qty-input').value))" 
+                                                ${product.stock === 0 ? 'disabled' : ''}
+                                                class="flex-1 ${product.stock === 0 ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-brand-600 hover:bg-brand-700 text-white'} font-semibold py-3 px-6 rounded-lg text-sm shadow-md transition-colors flex items-center justify-center gap-2">
+                                                <i class="fa-solid fa-cart-shopping"></i>
+                                                <span>${product.stock === 0 ? 'Out of Stock' : 'Add to Shopping Cart'}</span>
+                                            </button>
+
+                                            <button onclick="app.toggleWishlist('${product.id}')" 
+                                                class="p-3 border border-gray-300 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors">
+                                                <i class="${inWishlist ? 'fa-solid fa-heart text-rose-500' : 'fa-regular fa-heart'} text-lg"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tech Specifications -->
+                                <div class="pt-6 border-t border-gray-100">
+                                    <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Specifications</h3>
+                                    <div class="grid grid-cols-2 gap-2 text-xs">
+                                        ${Object.entries(product.specifications).map(([k, v]) => `
+                                            <div class="bg-slate-50 p-2 rounded border border-gray-100">
+                                                <span class="text-slate-400 font-medium block">${k}</span>
+                                                <span class="font-bold text-slate-800">${v}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Related Products -->
+                        ${related.length > 0 ? `
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-900 mb-4">Related Products</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                    ${related.map(p => this.renderProductCard(p)).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
+            renderCartView() {
+                if (this.cart.length === 0) {
+                    return `
+                        <div class="bg-white rounded-2xl border border-gray-200 p-12 text-center max-w-lg mx-auto my-12">
+                            <div class="w-20 h-20 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-600 text-3xl">
+                                <i class="fa-solid fa-cart-flatbed"></i>
+                            </div>
+                            <h2 class="text-xl font-bold text-slate-900 mb-2">Your Shopping Cart is Empty</h2>
+                            <p class="text-xs text-slate-500 mb-6">Looks like you haven't added any products to your cart yet.</p>
+                            <button onclick="app.navigateTo('products')" class="bg-brand-600 hover:bg-brand-700 text-white font-semibold px-6 py-2.5 rounded-lg text-xs transition-colors">
+                                Browse Products
+                            </button>
+                        </div>
+                    `;
+                }
+
+                const subtotal = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                const discount = this.calculateDiscountAmount(subtotal);
+                const shipping = subtotal > 100 ? 0 : 15;
+                const total = Math.max(0, subtotal - discount + shipping);
+
+                return `
+                    <div class="space-y-6">
+                        <h1 class="text-2xl font-bold text-slate-900">Shopping Cart (${this.cart.reduce((acc, i) => acc + i.quantity, 0)} items)</h1>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <!-- Items List -->
+                            <div class="lg:col-span-2 space-y-4">
+                                <div class="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100">
+                                    ${this.cart.map(item => `
+                                        <div class="p-4 flex items-center gap-4">
+                                            <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-lg bg-slate-100 border border-gray-200">
+                                            <div class="flex-1">
+                                                <a href="#product?id=${item.id}" onclick="app.navigateTo('product', {id: '${item.id}'})" class="font-bold text-sm text-slate-900 hover:text-brand-600">
+                                                    ${item.name}
+                                                </a>
+                                                <div class="text-xs text-slate-500 mt-0.5">$${item.price.toFixed(2)} each</div>
+                                            </div>
+
+                                            <!-- Quantity controls -->
+                                            <div class="flex items-center border border-gray-200 rounded-lg bg-slate-50">
+                                                <button onclick="app.updateCartQty('${item.id}', ${item.quantity - 1})" class="px-2.5 py-1 text-slate-600 font-bold hover:bg-slate-200 text-xs">-</button>
+                                                <input type="number" value="${item.quantity}" onchange="app.updateCartQty('${item.id}', parseInt(this.value))" class="w-10 text-center bg-transparent text-xs font-bold focus:outline-none">
+                                                <button onclick="app.updateCartQty('${item.id}', ${item.quantity + 1})" class="px-2.5 py-1 text-slate-600 font-bold hover:bg-slate-200 text-xs">+</button>
+                                            </div>
+
+                                            <div class="text-right">
+                                                <div class="font-black text-sm text-slate-900">$${(item.price * item.quantity).toFixed(2)}</div>
+                                                <button onclick="app.removeFromCart('${item.id}')" class="text-[11px] text-rose-500 hover:underline mt-1">Remove</button>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+
+                                <div class="flex justify-between items-center">
+                                    <button onclick="app.navigateTo('products')" class="text-xs font-semibold text-brand-600 hover:underline flex items-center gap-1">
+                                        <i class="fa-solid fa-arrow-left text-[10px]"></i> Continue Shopping
+                                    </button>
+                                    <button onclick="app.clearCart()" class="text-xs text-slate-400 hover:text-rose-500">Clear Shopping Cart</button>
+                                </div>
+                            </div>
+
+                            <!-- Order Summary -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-6 h-fit space-y-6">
+                                <h2 class="font-bold text-base text-slate-900 border-b border-gray-100 pb-3">Order Summary</h2>
+
+                                <!-- Coupon Code Form -->
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">Have a Promo Coupon?</label>
+                                    <div class="flex gap-2">
+                                        <input type="text" id="coupon-code-input" placeholder="e.g. NOVA10" value="${this.appliedCoupon ? this.appliedCoupon.code : ''}"
+                                            class="flex-1 bg-slate-50 border border-gray-200 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-brand-500 uppercase font-bold">
+                                        <button onclick="app.applyCouponCode()" class="bg-slate-900 hover:bg-brand-600 text-white font-semibold px-4 py-1.5 rounded-lg text-xs transition-colors">
+                                            Apply
+                                        </button>
+                                    </div>
+                                    ${this.appliedCoupon ? `
+                                        <div class="mt-2 flex items-center justify-between text-xs text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded">
+                                            <span><strong>${this.appliedCoupon.code}</strong> Applied</span>
+                                            <button onclick="app.removeCoupon()" class="text-rose-500 hover:underline"><i class="fa-solid fa-xmark"></i></button>
+                                        </div>
+                                    ` : ''}
+                                    <p class="text-[10px] text-slate-400 mt-1">Demo Codes: NOVA10, WELCOME15, EXPIRED20</p>
+                                </div>
+
+                                <!-- Breakdown -->
+                                <div class="space-y-2 text-xs border-t border-b border-gray-100 py-3">
+                                    <div class="flex justify-between text-slate-600">
+                                        <span>Subtotal</span>
+                                        <span class="font-medium">$${subtotal.toFixed(2)}</span>
+                                    </div>
+                                    ${discount > 0 ? `
+                                        <div class="flex justify-between text-emerald-600 font-medium">
+                                            <span>Discount</span>
+                                            <span>-$${discount.toFixed(2)}</span>
+                                        </div>
+                                    ` : ''}
+                                    <div class="flex justify-between text-slate-600">
+                                        <span>Estimated Shipping</span>
+                                        <span class="font-medium">${shipping === 0 ? '<span class="text-emerald-600 font-bold">FREE</span>' : '$' + shipping.toFixed(2)}</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex justify-between items-baseline">
+                                    <span class="font-bold text-sm text-slate-900">Total</span>
+                                    <span class="font-black text-xl text-slate-900">$${total.toFixed(2)}</span>
+                                </div>
+
+                                <button onclick="app.navigateTo('checkout')" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-4 rounded-lg text-sm shadow-md transition-colors flex items-center justify-center gap-2">
+                                    <span>Proceed to Checkout</span>
+                                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderCheckoutView() {
+                if (this.cart.length === 0) {
+                    this.navigateTo('cart');
+                    return '';
+                }
+
+                const subtotal = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                const discount = this.calculateDiscountAmount(subtotal);
+                const shipping = subtotal > 100 ? 0 : 15;
+                const total = Math.max(0, subtotal - discount + shipping);
+
+                // Pre-fill user data if available
+                const u = this.user || {};
+
+                return `
+                    <div class="max-w-4xl mx-auto space-y-6">
+                        <h1 class="text-2xl font-bold text-slate-900">Checkout</h1>
+
+                        <form id="checkout-form" onsubmit="app.processCheckoutOrder(event)" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <!-- Form Details -->
+                            <div class="lg:col-span-2 space-y-6">
+                                <!-- Shipping Information -->
+                                <div class="bg-white p-6 rounded-xl border border-gray-200 space-y-4">
+                                    <h2 class="font-bold text-sm text-slate-900 uppercase tracking-wider border-b border-gray-100 pb-2">1. Shipping Information</h2>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                                        <div>
+                                            <label class="block font-bold text-slate-700 mb-1">Full Name *</label>
+                                            <input type="text" id="chk-fullname" required value="${u.name || ''}" class="w-full bg-slate-50 border border-gray-200 rounded-lg p-2.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                                        </div>
+                                        <div>
+                                            <label class="block font-bold text-slate-700 mb-1">Email Address *</label>
+                                            <input type="email" id="chk-email" required value="${u.email || ''}" class="w-full bg-slate-50 border border-gray-200 rounded-lg p-2.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                                        </div>
+                                        <div>
+                                            <label class="block font-bold text-slate-700 mb-1">Phone Number *</label>
+                                            <input type="tel" id="chk-phone" required value="${u.phone || ''}" placeholder="+1 (555) 000-0000" class="w-full bg-slate-50 border border-gray-200 rounded-lg p-2.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                                        </div>
+                                        <div>
+                                            <label class="block font-bold text-slate-700 mb-1">Street Address *</label>
+                                            <input type="text" id="chk-address" required value="${u.address || ''}" class="w-full bg-slate-50 border border-gray-200 rounded-lg p-2.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                                        </div>
+                                        <div>
+                                            <label class="block font-bold text-slate-700 mb-1">City *</label>
+                                            <input type="text" id="chk-city" required value="${u.city || ''}" class="w-full bg-slate-50 border border-gray-200 rounded-lg p-2.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                                        </div>
+                                        <div>
+                                            <label class="block font-bold text-slate-700 mb-1">Postal Code *</label>
+                                            <input type="text" id="chk-postal" required value="${u.postalCode || ''}" class="w-full bg-slate-50 border border-gray-200 rounded-lg p-2.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Payment Method -->
+                                <div class="bg-white p-6 rounded-xl border border-gray-200 space-y-4">
+                                    <h2 class="font-bold text-sm text-slate-900 uppercase tracking-wider border-b border-gray-100 pb-2">2. Payment Method</h2>
+
+                                    <div class="space-y-2">
+                                        <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                                            <input type="radio" name="paymentMethod" value="cod" checked class="text-brand-600 focus:ring-brand-500">
+                                            <div class="text-xs">
+                                                <div class="font-bold text-slate-900">Cash on Delivery (COD)</div>
+                                                <div class="text-slate-500">Pay with cash upon delivery</div>
+                                            </div>
+                                        </label>
+
+                                        <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                                            <input type="radio" name="paymentMethod" value="card" class="text-brand-600 focus:ring-brand-500">
+                                            <div class="text-xs">
+                                                <div class="font-bold text-slate-900">Credit / Debit Card (Simulated)</div>
+                                                <div class="text-slate-500">Safe instant online transfer demo</div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Order Summary -->
+                            <div class="bg-white p-6 rounded-xl border border-gray-200 h-fit space-y-4">
+                                <h2 class="font-bold text-sm text-slate-900 uppercase tracking-wider border-b border-gray-100 pb-2">Summary</h2>
+
+                                <div class="divide-y divide-gray-100 max-h-60 overflow-y-auto">
+                                    ${this.cart.map(i => `
+                                        <div class="py-2 flex justify-between text-xs">
+                                            <div>
+                                                <span class="font-bold text-slate-800">${i.name}</span>
+                                                <span class="text-slate-400 block">Qty: ${i.quantity}</span>
+                                            </div>
+                                            <span class="font-bold text-slate-900">$${(i.price * i.quantity).toFixed(2)}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+
+                                <div class="pt-2 border-t border-gray-100 space-y-1.5 text-xs">
+                                    <div class="flex justify-between text-slate-600">
+                                        <span>Subtotal</span>
+                                        <span>$${subtotal.toFixed(2)}</span>
+                                    </div>
+                                    ${discount > 0 ? `
+                                        <div class="flex justify-between text-emerald-600 font-medium">
+                                            <span>Discount</span>
+                                            <span>-$${discount.toFixed(2)}</span>
+                                        </div>
+                                    ` : ''}
+                                    <div class="flex justify-between text-slate-600">
+                                        <span>Shipping</span>
+                                        <span>${shipping === 0 ? 'FREE' : '$' + shipping.toFixed(2)}</span>
+                                    </div>
+                                    <div class="flex justify-between font-black text-sm text-slate-900 pt-2 border-t border-gray-100">
+                                        <span>Total</span>
+                                        <span>$${total.toFixed(2)}</span>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-4 rounded-lg text-sm shadow-md transition-colors mt-4">
+                                    Place Order
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+            }
+
+            renderOrdersView() {
+                return `
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-center">
+                            <h1 class="text-2xl font-bold text-slate-900">Your Orders (${this.orders.length})</h1>
+                            <button onclick="app.navigateTo('products')" class="text-xs text-brand-600 hover:underline font-semibold">Continue Shopping</button>
+                        </div>
+
+                        ${this.orders.length === 0 ? `
+                            <div class="bg-white rounded-xl border border-gray-200 p-12 text-center max-w-md mx-auto my-8">
+                                <i class="fa-solid fa-box-open text-4xl text-slate-300 mb-3"></i>
+                                <h3 class="text-base font-bold text-slate-800">No past orders found</h3>
+                                <p class="text-xs text-slate-500 mt-1">Place an order using the checkout flow to test order tracking.</p>
+                            </div>
+                        ` : `
+                            <div class="space-y-4">
+                                ${this.orders.map(o => `
+                                    <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-4 shadow-sm">
+                                        <div class="flex flex-wrap justify-between items-center pb-3 border-b border-gray-100 text-xs gap-2">
+                                            <div>
+                                                <span class="text-slate-400">Order ID:</span>
+                                                <span class="font-bold text-slate-900 ml-1">#${o.id}</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-slate-400">Date:</span>
+                                                <span class="font-medium text-slate-700 ml-1">${o.date}</span>
+                                            </div>
+                                            <div>
+                                                <span class="px-2.5 py-1 rounded font-bold text-[10px] uppercase bg-emerald-100 text-emerald-800">${o.status}</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-slate-400">Total:</span>
+                                                <span class="font-black text-sm text-slate-900 ml-1">$${o.total.toFixed(2)}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="divide-y divide-gray-50">
+                                            ${o.items.map(item => `
+                                                <div class="py-2 flex items-center justify-between text-xs">
+                                                    <div class="flex items-center gap-3">
+                                                        <img src="${item.image}" alt="" class="w-10 h-10 object-cover rounded bg-slate-100">
+                                                        <div>
+                                                            <div class="font-bold text-slate-800">${item.name}</div>
+                                                            <div class="text-slate-400">Qty: ${item.quantity} × $${item.price.toFixed(2)}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="font-bold text-slate-900">$${(item.quantity * item.price).toFixed(2)}</div>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `}
+                    </div>
+                `;
+            }
+
+            renderWishlistView() {
+                return `
+                    <div class="space-y-6">
+                        <h1 class="text-2xl font-bold text-slate-900">Your Wishlist (${this.wishlist.length})</h1>
+
+                        ${this.wishlist.length === 0 ? `
+                            <div class="bg-white rounded-xl border border-gray-200 p-12 text-center max-w-md mx-auto my-8">
+                                <i class="fa-regular fa-heart text-4xl text-slate-300 mb-3"></i>
+                                <h3 class="text-base font-bold text-slate-800">Your Wishlist is empty</h3>
+                                <p class="text-xs text-slate-500 mt-1 mb-4">Save products you're interested in for later.</p>
+                                <button onclick="app.navigateTo('products')" class="bg-brand-600 text-white text-xs font-semibold px-4 py-2 rounded-lg">Explore Shop</button>
+                            </div>
+                        ` : `
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                ${this.wishlist.map(p => this.renderProductCard(p)).join('')}
+                            </div>
+                        `}
+                    </div>
+                `;
+            }
+
+            renderLoginView() {
+                return `
+                    <div class="max-w-md mx-auto my-8 bg-white p-8 rounded-2xl border border-gray-200 shadow-sm space-y-6">
+                        <div class="text-center space-y-1">
+                            <h1 class="text-2xl font-bold text-slate-900">Sign In to NOVA</h1>
+                            <p class="text-xs text-slate-500">Access your account and testing credentials</p>
+                        </div>
+
+                        <form onsubmit="app.handleLoginSubmit(event)" class="space-y-4 text-xs">
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Email Address</label>
+                                <input type="email" id="login-email" required placeholder="tester@nova.com" class="w-full bg-slate-50 border border-gray-200 rounded-lg p-2.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                            </div>
+
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Password</label>
+                                <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-slate-50 border border-gray-200 rounded-lg p-2.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                            </div>
+
+                            <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-2.5 rounded-lg text-xs transition-colors shadow">
+                                Log In
+                            </button>
+                        </form>
+
+                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs space-y-1">
+                            <span class="font-bold text-slate-700 block">Demo User Credentials:</span>
+                            <div class="text-slate-500">Email: <code class="bg-slate-200 px-1 rounded">tester@nova.com</code></div>
+                            <div class="text-slate-500">Password: <code class="bg-slate-200 px-1 rounded">Password123!</code></div>
+                        </div>
+
+                        <div class="text-center text-xs text-slate-500">
+                            Don't have an account? <button onclick="app.navigateTo('register')" class="text-brand-600 font-bold hover:underline">Register here</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderRegisterView() {
+                return `
+                    <div class="max-w-md mx-auto my-8 bg-white p-8 rounded-2xl border border-gray-200 shadow-sm space-y-6">
+                        <div class="text-center space-y-1">
+                            <h1 class="text-2xl font-bold text-slate-900">Create Account</h1>
+                            <p class="text-xs text-slate-500">Register to test user creation and validation</p>
+                        </div>
+
+                        <form onsubmit="app.handleRegisterSubmit(event)" class="space-y-4 text-xs">
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Full Name *</label>
+                                <input type="text" id="reg-name" required class="w-full bg-slate-50 border border-gray-200 rounded-lg p-2.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                            </div>
+
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Email Address *</label>
+                                <input type="email" id="reg-email" required class="w-full bg-slate-50 border border-gray-200 rounded-lg p-2.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                            </div>
+
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Password (min 6 chars) *</label>
+                                <input type="password" id="reg-password" minlength="6" required class="w-full bg-slate-50 border border-gray-200 rounded-lg p-2.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                            </div>
+
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Confirm Password *</label>
+                                <input type="password" id="reg-confirm" required class="w-full bg-slate-50 border border-gray-200 rounded-lg p-2.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                            </div>
+
+                            <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-2.5 rounded-lg text-xs transition-colors shadow">
+                                Register Account
+                            </button>
+                        </form>
+
+                        <div class="text-center text-xs text-slate-500">
+                            Already registered? <button onclick="app.navigateTo('login')" class="text-brand-600 font-bold hover:underline">Log In</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderProfileView() {
+                const u = this.user;
+                return `
+                    <div class="max-w-2xl mx-auto bg-white rounded-2xl border border-gray-200 p-8 space-y-6 shadow-sm">
+                        <div class="flex items-center justify-between pb-4 border-b border-gray-100">
+                            <div class="flex items-center gap-4">
+                                <div class="w-14 h-14 rounded-full bg-brand-100 text-brand-700 font-black text-xl flex items-center justify-center">
+                                    ${u.name.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <h1 class="text-xl font-bold text-slate-900">${u.name}</h1>
+                                    <p class="text-xs text-slate-500">${u.email}</p>
+                                </div>
+                            </div>
+                            <button onclick="app.logoutUser()" class="text-xs text-rose-600 hover:underline font-semibold">Sign Out</button>
+                        </div>
+
+                        <form onsubmit="app.handleProfileSave(event)" class="space-y-4 text-xs">
+                            <h3 class="font-bold text-sm text-slate-800">Edit Profile Details</h3>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-1">Full Name</label>
+                                    <input type="text" id="prof-name" value="${u.name}" required class="w-full bg-slate-50 border border-gray-200 rounded-lg p-2.5">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-1">Phone Number</label>
+                                    <input type="text" id="prof-phone" value="${u.phone || ''}" class="w-full bg-slate-50 border border-gray-200 rounded-lg p-2.5">
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block font-bold text-slate-700 mb-1">Street Address</label>
+                                    <input type="text" id="prof-address" value="${u.address || ''}" class="w-full bg-slate-50 border border-gray-200 rounded-lg p-2.5">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-1">City</label>
+                                    <input type="text" id="prof-city" value="${u.city || ''}" class="w-full bg-slate-50 border border-gray-200 rounded-lg p-2.5">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-1">Postal Code</label>
+                                    <input type="text" id="prof-postal" value="${u.postalCode || ''}" class="w-full bg-slate-50 border border-gray-200 rounded-lg p-2.5">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-semibold px-5 py-2.5 rounded-lg text-xs transition-colors">
+                                Save Profile Changes
+                            </button>
+                        </form>
+                    </div>
+                `;
+            }
+
+            renderQADocsView(activeTab) {
+                const tabs = [
+                    { id: 'overview', name: 'Overview / README', icon: 'fa-solid fa-book' },
+                    { id: 'test-plan', name: 'Test Plan', icon: 'fa-solid fa-map' },
+                    { id: 'test-cases', name: 'Test Cases (25)', icon: 'fa-solid fa-list-check' },
+                    { id: 'bug-reports', name: 'Defect Reports', icon: 'fa-solid fa-bug' },
+                    { id: 'rtm', name: 'RTM Matrix', icon: 'fa-solid fa-table-cells' },
+                    { id: 'deploy-guide', name: 'GitHub Pages Deployment', icon: 'fa-brands fa-github' }
+                ];
+
+                return `
+                    <div class="space-y-6">
+                        <!-- QA Header Banner -->
+                        <div class="bg-slate-900 text-white p-6 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                            <div>
+                                <span class="bg-amber-500 text-slate-950 font-black text-[10px] px-2 py-0.5 rounded uppercase tracking-wider">QA Portfolio Hub</span>
+                                <h1 class="text-2xl font-bold mt-1">NOVA Store Software Testing Documentation</h1>
+                                <p class="text-xs text-slate-400 mt-1">Interactive documentation viewer containing manual test artifacts and case studies.</p>
+                            </div>
+                        </div>
+
+                        <!-- Tab Sub-navigation -->
+                        <div class="flex overflow-x-auto border-b border-gray-200 bg-white px-2 rounded-xl border">
+                            ${tabs.map(t => `
+                                <button onclick="app.navigateTo('qa-docs', {tab: '${t.id}'})" 
+                                    class="py-3 px-4 text-xs font-semibold whitespace-nowrap border-b-2 transition-colors flex items-center gap-2 ${activeTab === t.id ? 'border-brand-600 text-brand-600 font-bold' : 'border-transparent text-slate-500 hover:text-slate-800'}">
+                                    <i class="${t.icon}"></i>
+                                    <span>${t.name}</span>
+                                </button>
+                            `).join('')}
+                        </div>
+
+                        <!-- Tab Active Document Content -->
+                        <div class="bg-white rounded-2xl border border-gray-200 p-6 md:p-8 space-y-6">
+                            ${this.getQADocumentContent(activeTab)}
+                        </div>
+                    </div>
+                `;
+            }
+
+            getQADocumentContent(tab) {
+                switch (tab) {
+                    case 'overview':
+                        return `
+                            <div class="prose max-w-none text-xs text-slate-700 space-y-4">
+                                <h2 class="text-lg font-bold text-slate-900 border-b pb-2">Project Overview</h2>
+                                <p><strong>NOVA Store</strong> is a fully interactive e-commerce web platform developed specifically as a software testing portfolio case study for a Junior Software Quality Assurance (QA) Tester.</p>
+                                
+                                <h3 class="font-bold text-sm text-slate-900 mt-4">Key Functional Features Covered</h3>
+                                <ul class="list-disc pl-5 space-y-1">
+                                    <li>Catalog filtering, price sliders, category selections, and multi-criteria sorting.</li>
+                                    <li>Client-side live instant search with auto-suggestions and clear actions.</li>
+                                    <li>Persistent cart management with coupon discount calculations (<code class="bg-slate-100 px-1 py-0.5 font-bold text-brand-700">NOVA10</code>, <code class="bg-slate-100 px-1 py-0.5 font-bold text-brand-700">WELCOME15</code>, <code class="bg-slate-100 px-1 py-0.5 font-bold text-brand-700">EXPIRED20</code>).</li>
+                                    <li>LocalStorage authentication session persistence, profile edits, and order logging.</li>
+                                    <li>Responsive accessibility across desktop, tablet, and mobile viewports.</li>
+                                </ul>
+
+                                <h3 class="font-bold text-sm text-slate-900 mt-4">Document Hierarchy</h3>
+                                <p>Use the tabs above to navigate through the official IEEE-compliant software testing artifacts created for this store.</p>
+                            </div>
+                        `;
+
+                    case 'test-plan':
+                        return `
+                            <div class="space-y-4 text-xs text-slate-700">
+                                <h2 class="text-lg font-bold text-slate-900 border-b pb-2">1. Master Test Plan (TP-NOVA-001)</h2>
+                                <p><strong>Scope:</strong> Functional, UI/UX, Regression, Boundary Value, Responsive, and Negative Software Testing for NOVA Store Frontend.</p>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+                                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                        <h4 class="font-bold text-slate-900 mb-2">In-Scope Components</h4>
+                                        <ul class="list-disc pl-4 space-y-1">
+                                            <li>User Authentication & LocalStorage Registration</li>
+                                            <li>Cart Quantity Math & Coupon Engine</li>
+                                            <li>Search Engine & Category Filters</li>
+                                            <li>Checkout Flow & Order Record Creation</li>
+                                        </ul>
+                                    </div>
+                                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                        <h4 class="font-bold text-slate-900 mb-2">Testing Types Applied</h4>
+                                        <ul class="list-disc pl-4 space-y-1">
+                                            <li>Smoke & Sanity Testing</li>
+                                            <li>Boundary Value Analysis (BVA)</li>
+                                            <li>Equivalence Partitioning (EP)</li>
+                                            <li>Negative & Error Handling Validation</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+
+                    case 'test-cases':
+                        return `
+                            <div class="space-y-4 text-xs">
+                                <h2 class="text-lg font-bold text-slate-900 border-b pb-2">2. Manual Test Cases Suite (25 Verification Scenarios)</h2>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full border-collapse border border-gray-200 text-left">
+                                        <thead class="bg-slate-100 text-slate-800 font-bold border-b border-gray-200">
+                                            <tr>
+                                                <th class="p-2 border">TC ID</th>
+                                                <th class="p-2 border">Module</th>
+                                                <th class="p-2 border">Description</th>
+                                                <th class="p-2 border">Preconditions</th>
+                                                <th class="p-2 border">Expected Result</th>
+                                                <th class="p-2 border">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-200">
+                                            <tr><td class="p-2 border font-bold">TC_AUTH_01</td><td class="p-2 border">Auth</td><td class="p-2 border">Verify valid user registration</td><td class="p-2 border">Unregistered email</td><td class="p-2 border">User saved to LocalStorage</td><td class="p-2 border text-emerald-600 font-bold">PASS</td></tr>
+                                            <tr><td class="p-2 border font-bold">TC_AUTH_02</td><td class="p-2 border">Auth</td><td class="p-2 border">Verify duplicate email registration error</td><td class="p-2 border">Email exists in system</td><td class="p-2 border">Validation error popup appears</td><td class="p-2 border text-emerald-600 font-bold">PASS</td></tr>
+                                            <tr><td class="p-2 border font-bold">TC_CART_01</td><td class="p-2 border">Cart</td><td class="p-2 border">Apply valid coupon (NOVA10)</td><td class="p-2 border">Cart has items</td><td class="p-2 border">10% discount subtracted correctly</td><td class="p-2 border text-emerald-600 font-bold">PASS</td></tr>
+                                            <tr><td class="p-2 border font-bold">TC_CART_02</td><td class="p-2 border">Cart</td><td class="p-2 border">Apply expired coupon (EXPIRED20)</td><td class="p-2 border">Cart has items</td><td class="p-2 border">Error toast: "Coupon expired"</td><td class="p-2 border text-emerald-600 font-bold">PASS</td></tr>
+                                            <tr><td class="p-2 border font-bold">TC_SRCH_01</td><td class="p-2 border">Search</td><td class="p-2 border">Search for partial keyword "laptop"</td><td class="p-2 border">On Products view</td><td class="p-2 border">Filtered grid displays UltraBook & AirLite</td><td class="p-2 border text-emerald-600 font-bold">PASS</td></tr>
+                                            <tr><td class="p-2 border font-bold">TC_CHK_01</td><td class="p-2 border">Checkout</td><td class="p-2 border">Submit checkout form with empty phone number</td><td class="p-2 border">Items in cart</td><td class="p-2 border">HTML5 validation blocks submission</td><td class="p-2 border text-emerald-600 font-bold">PASS</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        `;
+
+                    case 'bug-reports':
+                        return `
+                            <div class="space-y-4 text-xs">
+                                <h2 class="text-lg font-bold text-slate-900 border-b pb-2">3. Defect Reports / Case Study Logs</h2>
+                                <div class="bg-amber-50 border border-amber-200 p-3 rounded-lg text-amber-900 mb-4">
+                                    <strong>QA Note:</strong> Below are formal defect documentation templates demonstrating how issues are reported during sprint testing cycles.
+                                </div>
+
+                                <div class="bg-white border border-rose-200 rounded-xl p-4 space-y-2">
+                                    <div class="flex justify-between font-bold text-rose-700">
+                                        <span>[BUG-101] Cart Accepts Zero Quantity Input in Edge Cases</span>
+                                        <span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded text-[10px]">SEVERITY: MEDIUM</span>
+                                    </div>
+                                    <p class="text-slate-600"><strong>Steps to Reproduce:</strong> 1. Add item to cart. 2. Manually type '0' in item input box. 3. Blur focus.</p>
+                                    <p class="text-slate-600"><strong>Expected Behavior:</strong> Item should auto-remove or revert to quantity 1.</p>
+                                </div>
+
+                                <div class="bg-white border border-amber-200 rounded-xl p-4 space-y-2">
+                                    <div class="flex justify-between font-bold text-amber-700">
+                                        <span>[BUG-102] Mobile Viewport Coupon Box Clipping</span>
+                                        <span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded text-[10px]">SEVERITY: LOW</span>
+                                    </div>
+                                    <p class="text-slate-600"><strong>Steps to Reproduce:</strong> Open cart view on 320px screen.</p>
+                                    <p class="text-slate-600"><strong>Expected Behavior:</strong> Apply button wraps gracefully on narrow displays.</p>
+                                </div>
+                            </div>
+                        `;
+
+                    case 'rtm':
+                        return `
+                            <div class="space-y-4 text-xs">
+                                <h2 class="text-lg font-bold text-slate-900 border-b pb-2">4. Requirements Traceability Matrix (RTM)</h2>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full border-collapse border border-gray-200 text-left">
+                                        <thead class="bg-slate-100 text-slate-800 font-bold border-b border-gray-200">
+                                            <tr>
+                                                <th class="p-2 border">Req ID</th>
+                                                <th class="p-2 border">Requirement Description</th>
+                                                <th class="p-2 border">Test Case Ref</th>
+                                                <th class="p-2 border">Coverage Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-200">
+                                            <tr><td class="p-2 border font-bold">REQ-ECOMM-01</td><td class="p-2 border">User registration with LocalStorage persistence</td><td class="p-2 border">TC_AUTH_01, TC_AUTH_02</td><td class="p-2 border text-emerald-600 font-bold">100% COVERED</td></tr>
+                                            <tr><td class="p-2 border font-bold">REQ-ECOMM-02</td><td class="p-2 border">Coupon discount engine verification</td><td class="p-2 border">TC_CART_01, TC_CART_02</td><td class="p-2 border text-emerald-600 font-bold">100% COVERED</td></tr>
+                                            <tr><td class="p-2 border font-bold">REQ-ECOMM-03</td><td class="p-2 border">Out-of-stock item handling</td><td class="p-2 border">TC_PROD_03</td><td class="p-2 border text-emerald-600 font-bold">100% COVERED</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        `;
+
+                    case 'deploy-guide':
+                        return `
+                            <div class="space-y-4 text-xs text-slate-700">
+                                <h2 class="text-lg font-bold text-slate-900 border-b pb-2">5. GitHub Repository Initialization & GitHub Pages Deployment Guide</h2>
+
+                                <p>Follow these standard Git terminal commands to publish this complete single-file repository on GitHub Pages:</p>
+
+                                <div class="bg-slate-900 text-slate-100 p-4 rounded-xl font-mono space-y-2">
+                                    <p class="text-slate-400"># 1. Initialize Git Repository</p>
+                                    <p>git init</p>
+                                    <p>git add index.html</p>
+                                    <p>git commit -m "feat: Initial commit of NOVA Store E-Commerce QA Portfolio"</p>
+                                    
+                                    <p class="text-slate-400 pt-2"># 2. Link Remote Repository (Replace with your GitHub repo URL)</p>
+                                    <p>git branch -M main</p>
+                                    <p>git remote add origin https://github.com/YourUsername/nova-store-qa-portfolio.git</p>
+                                    <p>git push -u origin main</p>
+                                </div>
+
+                                <h3 class="font-bold text-sm text-slate-900">Enabling GitHub Pages:</h3>
+                                <ol class="list-decimal pl-5 space-y-1">
+                                    <li>Navigate to your repository settings on GitHub.</li>
+                                    <li>Click on <strong>Pages</strong> in the left menu.</li>
+                                    <li>Under <strong>Branch</strong>, select <code class="bg-slate-100 px-1 py-0.5 font-bold">main</code> branch and <code class="bg-slate-100 px-1 py-0.5 font-bold">/ (root)</code> folder.</li>
+                                    <li>Click <strong>Save</strong>. Your live QA portfolio site will be published at <code class="bg-slate-100 px-1 font-bold text-brand-600">https://yourusername.github.io/nova-store-qa-portfolio/</code>.</li>
+                                </ol>
+                            </div>
+                        `;
+                }
+            }
+
+            renderNotFoundView(msg = "Page Not Found") {
+                return `
+                    <div class="text-center py-16 space-y-4 max-w-md mx-auto">
+                        <div class="text-5xl font-black text-slate-300">404</div>
+                        <h2 class="text-xl font-bold text-slate-900">${msg}</h2>
+                        <p class="text-xs text-slate-500">The page or product you are looking for does not exist or has been moved.</p>
+                        <button onclick="app.navigateTo('home')" class="bg-brand-600 text-white text-xs font-semibold px-4 py-2 rounded-lg">Return to Home</button>
+                    </div>
+                `;
+            }
+
+            getCategoryIcon(cat) {
+                const map = {
+                    'Electronics': 'fa-solid fa-tv',
+                    'Laptops': 'fa-solid fa-laptop',
+                    'Smartphones': 'fa-solid fa-mobile-screen',
+                    'Audio': 'fa-solid fa-headphones',
+                    'Accessories': 'fa-solid fa-keyboard',
+                    'Smart Devices': 'fa-solid fa-clock'
+                };
+                return map[cat] || 'fa-solid fa-box';
+            }
+
+            updateHeaderAuthUI() {
+                const container = document.getElementById('auth-header-container');
+                if (!container) return;
+
+                if (this.user) {
+                    container.innerHTML = `
+                        <button onclick="app.navigateTo('profile')" class="flex items-center gap-2 text-xs font-semibold text-slate-700 hover:text-brand-600 p-1.5 rounded-lg hover:bg-slate-50">
+                            <div class="w-7 h-7 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold text-xs">
+                                ${this.user.name.charAt(0).toUpperCase()}
+                            </div>
+                            <span class="hidden sm:inline">${this.user.name.split(' ')[0]}</span>
+                        </button>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <button onclick="app.navigateTo('login')" class="text-xs font-semibold text-slate-700 hover:text-brand-600 py-2 px-3 rounded-lg hover:bg-slate-50 transition-colors">
+                            Log In
+                        </button>
+                        <button onclick="app.navigateTo('register')" class="text-xs font-semibold bg-brand-600 text-white py-2 px-3 rounded-lg hover:bg-brand-700 transition-colors shadow-sm">
+                            Register
+                        </button>
+                    `;
+                }
+            }
+
+            updateBadges() {
+                const cartBadge = document.getElementById('cart-badge');
+                const wishlistBadge = document.getElementById('wishlist-badge');
+                const cartTotalHeader = document.getElementById('cart-total-header');
+
+                const cartCount = this.cart.reduce((a, b) => a + b.quantity, 0);
+                const wishlistCount = this.wishlist.length;
+                const subtotal = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+                if (cartBadge) {
+                    cartBadge.textContent = cartCount;
+                    cartBadge.classList.toggle('hidden', cartCount === 0);
+                }
+
+                if (wishlistBadge) {
+                    wishlistBadge.textContent = wishlistCount;
+                    wishlistBadge.classList.toggle('hidden', wishlistCount === 0);
+                }
+
+                if (cartTotalHeader) {
+                    cartTotalHeader.textContent = `$${subtotal.toFixed(2)}`;
+                }
+            }
+
+            showToast(msg, type = 'info') {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = `p-3.5 rounded-xl shadow-lg border text-xs font-semibold flex items-center justify-between gap-3 transform transition-all duration-300 pointer-events-auto ${
+                    type === 'success' ? 'bg-emerald-900 text-white border-emerald-700' :
+                    type === 'error' ? 'bg-rose-900 text-white border-rose-700' : 'bg-slate-900 text-white border-slate-700'
+                }`;
+
+                toast.innerHTML = `
+                    <span>${msg}</span>
+                    <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                `;
+
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.classList.add('opacity-0', 'translate-y-2');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+
+            // FILTER & SEARCH ACTIONS
+            filterByCategory(cat) {
+                this.shopFilters.category = cat;
+                this.navigateTo('products');
+            }
+
+            setCategoryFilter(cat) {
+                this.shopFilters.category = cat;
+                this.render();
+            }
+
+            resetFilters() {
+                this.shopFilters = {
+                    category: 'All',
+                    priceMax: 1500,
+                    minRating: 0,
+                    inStockOnly: false,
+                    searchQuery: '',
+                    sortBy: 'featured'
+                };
+                const searchInput = document.getElementById('global-search-input');
+                if (searchInput) searchInput.value = '';
+                this.render();
+            }
+
+            attachShopFilterEvents() {
+                const priceRange = document.getElementById('filter-price-range');
+                const ratingSelect = document.getElementById('filter-rating-select');
+                const inStockCb = document.getElementById('filter-instock-checkbox');
+                const sortSelect = document.getElementById('shop-sort-select');
+
+                if (priceRange) {
+                    priceRange.addEventListener('input', (e) => {
+                        this.shopFilters.priceMax = parseFloat(e.target.value);
+                        document.getElementById('price-slider-val').textContent = `$${this.shopFilters.priceMax}`;
+                        this.render();
+                    });
+                }
+
+                if (ratingSelect) {
+                    ratingSelect.addEventListener('change', (e) => {
+                        this.shopFilters.minRating = parseFloat(e.target.value);
+                        this.render();
+                    });
+                }
+
+                if (inStockCb) {
+                    inStockCb.addEventListener('change', (e) => {
+                        this.shopFilters.inStockOnly = e.target.checked;
+                        this.render();
+                    });
+                }
+
+                if (sortSelect) {
+                    sortSelect.addEventListener('change', (e) => {
+                        this.shopFilters.sortBy = e.target.value;
+                        this.render();
+                    });
+                }
+            }
+
+            handleSearchInput(val) {
+                const clearBtn = document.getElementById('search-clear-btn');
+                const suggestionsBox = document.getElementById('search-suggestions');
+                
+                if (clearBtn) clearBtn.classList.toggle('hidden', !val);
+
+                if (!val.trim()) {
+                    suggestionsBox.classList.add('hidden');
+                    return;
+                }
+
+                const matches = this.products.filter(p => 
+                    p.name.toLowerCase().includes(val.toLowerCase()) || 
+                    p.category.toLowerCase().includes(val.toLowerCase())
+                ).slice(0, 5);
+
+                if (matches.length > 0) {
+                    suggestionsBox.innerHTML = matches.map(p => `
+                        <div onclick="app.executeSearch('${p.name.replace(/'/g, "\\'")}')" class="p-3 hover:bg-slate-50 cursor-pointer flex items-center justify-between border-b border-gray-100 last:border-none text-xs">
+                            <div class="font-medium text-slate-800">${p.name}</div>
+                            <div class="font-bold text-slate-900">$${p.price.toFixed(2)}</div>
+                        </div>
+                    `).join('');
+                    suggestionsBox.classList.remove('hidden');
+                } else {
+                    suggestionsBox.innerHTML = `<div class="p-3 text-xs text-slate-400">No matching products found</div>`;
+                    suggestionsBox.classList.remove('hidden');
+                }
+            }
+
+            clearSearch() {
+                const searchInput = document.getElementById('global-search-input');
+                if (searchInput) searchInput.value = '';
+                this.shopFilters.searchQuery = '';
+                document.getElementById('search-suggestions').classList.add('hidden');
+                document.getElementById('search-clear-btn').classList.add('hidden');
+                this.render();
+            }
+
+            executeSearch(query) {
+                this.shopFilters.searchQuery = query;
+                document.getElementById('search-suggestions').classList.add('hidden');
+                this.navigateTo('products');
+            }
+
+            // CART & WISHLIST CONTROLS
+            addToCart(productId, qty = 1) {
+                const product = this.products.find(p => p.id === productId);
+                if (!product || product.stock === 0) return;
+
+                const existing = this.cart.find(i => i.id === productId);
+                if (existing) {
+                    existing.quantity += qty;
+                } else {
+                    this.cart.push({ ...product, quantity: qty });
+                }
+
+                localStorage.setItem('nova_cart', JSON.stringify(this.cart));
+                this.updateBadges();
+                this.showToast(`Added "${product.name}" to cart`, 'success');
+            }
+
+            updateCartQty(id, newQty) {
+                if (isNaN(newQty) || newQty < 1) {
+                    this.removeFromCart(id);
+                    return;
+                }
+                const item = this.cart.find(i => i.id === id);
+                if (item) {
+                    item.quantity = newQty;
+                    localStorage.setItem('nova_cart', JSON.stringify(this.cart));
+                    this.updateBadges();
+                    this.render();
+                }
+            }
+
+            removeFromCart(id) {
+                this.cart = this.cart.filter(i => i.id !== id);
+                localStorage.setItem('nova_cart', JSON.stringify(this.cart));
+                this.updateBadges();
+                this.render();
+                this.showToast("Item removed from cart");
+            }
+
+            clearCart() {
+                this.cart = [];
+                localStorage.setItem('nova_cart', JSON.stringify([]));
+                this.updateBadges();
+                this.render();
+            }
+
+            toggleWishlist(productId) {
+                const product = this.products.find(p => p.id === productId);
+                const idx = this.wishlist.findIndex(i => i.id === productId);
+
+                if (idx > -1) {
+                    this.wishlist.splice(idx, 1);
+                    this.showToast(`Removed from Wishlist`);
+                } else {
+                    this.wishlist.push(product);
+                    this.showToast(`Saved to Wishlist`, 'success');
+                }
+
+                localStorage.setItem('nova_wishlist', JSON.stringify(this.wishlist));
+                this.updateBadges();
+                this.render();
+            }
+
+            adjustDetailQty(delta) {
+                const input = document.getElementById('detail-qty-input');
+                let val = parseInt(input.value) + delta;
+                if (val < 1) val = 1;
+                input.value = val;
+            }
+
+            // COUPON ENGINE logic
+            applyCouponCode() {
+                const code = document.getElementById('coupon-code-input').value.trim().toUpperCase();
+                if (!code) return;
+
+                const coupon = VALID_COUPONS[code];
+                if (!coupon) {
+                    this.showToast("Invalid promo coupon code", 'error');
+                    return;
+                }
+
+                if (coupon.expired) {
+                    this.showToast("This promo coupon code has expired", 'error');
+                    return;
+                }
+
+                this.appliedCoupon = { code, ...coupon };
+                localStorage.setItem('nova_coupon', JSON.stringify(this.appliedCoupon));
+                this.showToast(`Coupon ${code} applied successfully!`, 'success');
+                this.render();
+            }
+
+            removeCoupon() {
+                this.appliedCoupon = null;
+                localStorage.removeItem('nova_coupon');
+                this.showToast("Coupon removed");
+                this.render();
+            }
+
+            calculateDiscountAmount(subtotal) {
+                if (!this.appliedCoupon) return 0;
+                if (this.appliedCoupon.type === 'percent') {
+                    return (subtotal * this.appliedCoupon.value) / 100;
+                }
+                return 0;
+            }
+
+            // CHECKOUT & ORDERS
+            processCheckoutOrder(e) {
+                e.preventDefault();
+
+                const subtotal = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                const discount = this.calculateDiscountAmount(subtotal);
+                const shipping = subtotal > 100 ? 0 : 15;
+                const total = Math.max(0, subtotal - discount + shipping);
+
+                const newOrder = {
+                    id: 'ORD-' + Math.floor(100000 + Math.random() * 900000),
+                    date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+                    items: [...this.cart],
+                    total: total,
+                    status: 'Processing',
+                    customer: {
+                        name: document.getElementById('chk-fullname').value,
+                        email: document.getElementById('chk-email').value,
+                        address: document.getElementById('chk-address').value
+                    }
+                };
+
+                this.orders.unshift(newOrder);
+                localStorage.setItem('nova_orders', JSON.stringify(this.orders));
+
+                // Clear cart state
+                this.cart = [];
+                this.appliedCoupon = null;
+                localStorage.removeItem('nova_cart');
+                localStorage.removeItem('nova_coupon');
+                this.updateBadges();
+
+                this.showToast(`Order #${newOrder.id} placed successfully!`, 'success');
+                this.navigateTo('orders');
+            }
+
+            // AUTHENTICATION LOGIC
+            handleLoginSubmit(e) {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const pass = document.getElementById('login-password').value;
+
+                const found = this.registeredUsers.find(u => u.email === email && u.password === pass);
+
+                if (found) {
+                    this.user = found;
+                    localStorage.setItem('nova_user', JSON.stringify(this.user));
+                    this.updateHeaderAuthUI();
+                    this.showToast(`Welcome back, ${found.name}!`, 'success');
+                    this.navigateTo('profile');
+                } else {
+                    this.showToast("Invalid email or password", 'error');
+                }
+            }
+
+            handleRegisterSubmit(e) {
+                e.preventDefault();
+                const name = document.getElementById('reg-name').value;
+                const email = document.getElementById('reg-email').value;
+                const pass = document.getElementById('reg-password').value;
+                const confirm = document.getElementById('reg-confirm').value;
+
+                if (pass !== confirm) {
+                    this.showToast("Passwords do not match", 'error');
+                    return;
+                }
+
+                if (this.registeredUsers.some(u => u.email === email)) {
+                    this.showToast("An account with this email already exists", 'error');
+                    return;
+                }
+
+                const newUser = { name, email, password: pass };
+                this.registeredUsers.push(newUser);
+                localStorage.setItem('nova_users_db', JSON.stringify(this.registeredUsers));
+
+                this.user = newUser;
+                localStorage.setItem('nova_user', JSON.stringify(this.user));
+                this.updateHeaderAuthUI();
+
+                this.showToast("Account created successfully!", 'success');
+                this.navigateTo('profile');
+            }
+
+            handleProfileSave(e) {
+                e.preventDefault();
+                this.user.name = document.getElementById('prof-name').value;
+                this.user.phone = document.getElementById('prof-phone').value;
+                this.user.address = document.getElementById('prof-address').value;
+                this.user.city = document.getElementById('prof-city').value;
+                this.user.postalCode = document.getElementById('prof-postal').value;
+
+                localStorage.setItem('nova_user', JSON.stringify(this.user));
+                this.updateHeaderAuthUI();
+                this.showToast("Profile details updated", 'success');
+            }
+
+            logoutUser() {
+                this.user = null;
+                localStorage.removeItem('nova_user');
+                this.updateHeaderAuthUI();
+                this.showToast("Signed out");
+                this.navigateTo('home');
+            }
+
+            toggleMobileMenu() {
+                const menu = document.getElementById('mobile-menu');
+                menu.classList.toggle('hidden');
+            }
+
+            // TESTING HELPER SHORTCUTS
+            seedDemoData() {
+                localStorage.clear();
+                this.cart = [];
+                this.wishlist = [];
+                this.user = null;
+                this.orders = [];
+                this.appliedCoupon = null;
+                this.updateHeaderAuthUI();
+                this.updateBadges();
+                this.showToast("Demo data reset to clean initial state", 'success');
+                this.navigateTo('home');
+            }
+
+            quickLoginDemoUser() {
+                this.user = this.registeredUsers[0];
+                localStorage.setItem('nova_user', JSON.stringify(this.user));
+                this.updateHeaderAuthUI();
+                this.showToast("Logged in as John QA Tester", 'success');
+                this.navigateTo('profile');
+            }
+        }
+
+        // INITIALIZE APP ON DOM LOAD
+        let app;
+        window.addEventListener('DOMContentLoaded', () => {
+            app = new NovaApp();
+            app.init();
+        });
+    </script>
+</body>
+</html>
